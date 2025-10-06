@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'apps.dashboard',
     'apps.reports',
     'apps.support',
-    'apps.accounts'
+    'apps.users'
     
 ]
 
