@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+db.sqlite3
+*.sqlite3
+*.log
+
+# Environment
+.env
+venv/
+env/
+*.egg-info/
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations (optional, if you want to ignore pyc in migrations)
+**/migrations/__pycache__/
+
+# VS Code
+.vscode/
+
+# Redis
+dump.rdb
+
+# Celery
+celerybeat-schedule
+celerybeat-schedule.db
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Test output
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Build
+build/
+dist/
+*.manifest
+*.spec
+
+# Pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# Pytest
+.cache/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Static files (Django collectstatic output)
+staticfiles/
+static/
+
+# Media files (user uploads)
+media/
+
+# IDEs
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Mac
+*.DS_Store
+
+# Windows
+*.Thumbs.db
+ehthumbs.db
+Desktop.ini
