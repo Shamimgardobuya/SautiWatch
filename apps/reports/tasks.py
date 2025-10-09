@@ -83,6 +83,9 @@ def notify_authorities_task(reportId):
                 if contact_number:
                     try:
                         TWILIO_CLIENT.messages.create(body=f"New report: {report}", from_=settings.TWILIO_FROM_NUMBER, to=contact_number)
+                        report.assigned_to = station
+                        report.status = 'under_review'
+                        report.save()
                         AuditLog.objects.create(report=report, action='notified_authority', performed_by=None, metadata={'authority': authority.name})
                     except Exception as e:
                         AuditLog.objects.create(report=report, action='sms_failed', metadata={'authority': authority.name, 'error': str(e)})

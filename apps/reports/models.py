@@ -1,5 +1,5 @@
 from django.db import models
-from apps.users.models import CustomUser
+from apps.authorities.models import Authority
 from cryptography.fernet import Fernet
 from django.conf import settings
 import base64
@@ -44,7 +44,7 @@ class Report(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)   
-    assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
+    assigned_to = models.ForeignKey(Authority, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
     
 
     class Meta:
