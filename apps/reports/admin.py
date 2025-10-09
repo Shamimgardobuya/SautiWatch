@@ -4,34 +4,39 @@ from .models import Report, Region
 # Register your models here.
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'code', 'contact_email', 'contact_phone']
+    list_display = ['name', 'code']
     search_fields = ['name', 'code']
-
-
 
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ['id', 'urgency_level', 'status', 'region', 'created_at', 'assigned_to']
-    list_filter = ['status', 'urgency_level', 'region', 'created_at']
-    search_fields = ['location', 'description']
-    readonly_fields = ['created_at', 'updated_at']
+    list_display = ['tracking_id', 'location', 'region', 'urgency_level', 'status', 'created_at', 'is_anonymous']
+    list_filter = ['status', 'urgency_level', 'region', 'created_at', 'is_anonymous']
+    search_fields = ['tracking_id', 'location', 'description']
+    readonly_fields = ['tracking_id', 'created_at', 'updated_at',]
+    date_hierarchy = 'created_at'
     
     fieldsets = (
-        ('Report Information', {
-            'fields': ('victim_name', 'location', 'region', 'urgency_level')
+        ('Identification', {
+            'fields': ('tracking_id', 'is_anonymous', 'victim_name')
+        }),
+        ('Assaulter Information', {
+            'fields': ('assaulter_name', 'assaulter_description')
         }),
         ('Incident Details', {
-            'fields': ('incident_date', 'description')
+            'fields': ('location', 'region', 'incident_date', 'description', 'urgency_level')
         }),
-        ('Status', {
-            'fields': ('status', 'assigned_to')
+        ('Case Management', {
+            'fields': ('status', 'encrypted_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at', 'resolved_at')
         }),
         ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
+            'fields': ('ip_address', 'user_agent'),
             'classes': ('collapse',)
         }),
     )
     
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('region')
