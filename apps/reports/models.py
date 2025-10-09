@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from apps.users.models import CustomUser
 from cryptography.fernet import Fernet
 from django.conf import settings
 import base64
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 
@@ -43,7 +44,7 @@ class Report(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)   
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
+    assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_reports')
     
 
     class Meta:
@@ -81,4 +82,11 @@ class Report(models.Model):
 
 
 
+class AuditLog(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='audit_logs')
+    action = models.CharField(max_length=255)
+    performed_by = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    metadata = models.JSONField(blank=True, null=True)
+    
 

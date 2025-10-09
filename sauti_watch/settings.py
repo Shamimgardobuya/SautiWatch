@@ -11,18 +11,27 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+AUTH_USER_MODEL = 'users.CustomUser'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_*p$$*=424oc4a@x0gu17_8oi09o#*!&yuo^o8*+oq9bs!*1e3'
-
-ENCRYPTION_KEY = b'KQZ46BVmHjtWQzdQBXoSNXIcih9hnGQ8m1xAIJfrU8M='
+# os.getenv("SECRET_KEY")
+TWILIO_ACCOUNT_SID=os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN=os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_FROM_NUMBER=os.getenv("TWILIO_FROM_NUMBER")
+TWILIO_TEST_NUMBER=os.getenv("TWILIO_TEST_NUMBER")
+LOCATIONIQ_API_KEY=os.getenv("LOCATIONIQ_API_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY").encode()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,10 +48,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'twilio',
     'apps.dashboard',
     'apps.reports',
     'apps.support',
-    'apps.users'
+    'apps.users',
+    'apps.authorities'
     
 ]
 
