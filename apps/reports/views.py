@@ -20,9 +20,6 @@ def report_create_view(request):
             report = form.save(commit=False)
             report.save()
             
-            # Send notification to relevant authorities
-            notify_authorities(report)
-            
             messages.success(request, 'Your report has been submitted securely. Reference ID: #' + str(report.id))
             return redirect('report_success')
     else:
@@ -81,40 +78,3 @@ def report_detail_view(request, pk):
         "report": report
     }
     return render(request, "reports/report_detail.html", context)
-
-def notify_authorities(report):
-    """Send email notification to relevant authorities"""
-    try:
-        subject = f'[URGENT] New Report #{report.id} - {report.get_urgency_level_display()} Priority'
-        message = f"""
-A new confidential report has been submitted.
-
-Report ID: #{report.id}
-Urgency: {report.get_urgency_level_display()}
-Location: {report.location}
-Region: {report.region.name if report.region else 'Not specified'}
-Date of Incident: {report.incident_date.strftime('%Y-%m-%d %H:%M')}
-Status: {report.get_status_display()}
-
-Please log in to the system to view full details.
-
-This is an automated message. Do not reply to this email.
-        """
-        
-        # Send to region contact if available
-        recipient_list = []
-        if report.region and report.region.contact_email:
-            recipient_list.append(report.region.contact_email)
-        
-        # Also send to admin email
-        recipient_list.append(settings.ADMIN_EMAIL)
-        
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            recipient_list,
-            fail_silently=False,
-        )
-    except Exception as e:
-        print(f"Failed to send notification: {e}")

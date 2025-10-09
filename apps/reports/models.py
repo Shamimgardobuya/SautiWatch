@@ -55,7 +55,7 @@ class Report(models.Model):
         ]
     
     def __str__(self):
-        return f"Report #{self.id} - {self.get_urgency_level_display()} - {self.created_at.strftime('%Y-%m-%d')}. Case of {self.description}"
+        return f"Report #{self.id} - {self.get_urgency_level_display()} - {self.created_at.strftime('%Y-%m-%d')}."
     
     def save(self, *args, **kwargs):
         if self.description and not self.description.startswith('gAAAAA'):
