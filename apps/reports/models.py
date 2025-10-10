@@ -44,7 +44,9 @@ class Report(models.Model):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, related_name='reports')
     urgency_level = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='medium')    
     incident_date = models.DateTimeField()
-    description = models.TextField() 
+
+    incident_description = models.TextField()
+    image = models.ImageField(upload_to='reports/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)   

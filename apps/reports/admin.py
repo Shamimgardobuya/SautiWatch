@@ -26,7 +26,7 @@ class ReportAdmin(admin.ModelAdmin):
             'fields': ('assaulter_name', 'assaulter_description')
         }),
         ('Incident Details', {
-            'fields': ('location', 'region', 'incident_date', 'description', 'urgency_level')
+            'fields': ('location', 'region', 'incident_date', 'description', 'image', 'urgency_level')
         }),
         ('Case Management', {
             'fields': ('status',)

@@ -8,12 +8,13 @@ class RegionSerializer(serializers.ModelSerializer):
 
 class ReportSerializer(serializers.ModelSerializer):
     victim_name = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    assaulter_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    image = serializers.ImageField(required=False, allow_null=True)
     decrypted_victim_name = serializers.SerializerMethodField(read_only=True)
     decrypted_description = serializers.SerializerMethodField(read_only=True)
     decrypted_assaulter_name = serializers.SerializerMethodField(read_only=True)
 
-    region_name = serializers.CharField(source='region.name', read_only=True)
-    assigned_to_username = serializers.CharField(source='assigned_to.username', read_only=True)
+
 
     class Meta:
         model = Report
@@ -28,16 +29,14 @@ class ReportSerializer(serializers.ModelSerializer):
             'assaulter_description',
             'location',
             'region',
-            'region_name',
-            'urgency_level',
             'incident_date',
-            'description',
+            'incident_description',
             'decrypted_description',
-            'status',
+            'image',
             'created_at',
             'updated_at',
-            'assigned_to',
-            'assigned_to_username'
+
+
         ]
         read_only_fields = ['tracking_id', 'created_at', 'updated_at']
 

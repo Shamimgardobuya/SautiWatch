@@ -6,7 +6,7 @@ class ReportForm(forms.ModelForm):
     
     class Meta:
         model = Report
-        fields = ['victim_name', 'is_anonymous', 'assaulter_name', 'assaulter_description', 'location', 'region', 'incident_date', 'description',  ]
+        fields = ['victim_name', 'is_anonymous', 'assaulter_name', 'assaulter_description', 'location', 'region', 'incident_date', 'description', 'image']
         widgets = {
             'victim_name': forms.TextInput(attrs={
                 'class': 'form-control',
