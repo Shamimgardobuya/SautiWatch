@@ -56,9 +56,9 @@ class ReportListCreateView(generics.ListCreateAPIView):
         return report
 
 
-# --------------------------
-# 🕵️ Single Report Detail API
-# --------------------------
+
+#  Single Report Detail API
+
 class ReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     GET: Retrieve a single report (decrypted fields returned in serializer)
