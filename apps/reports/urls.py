@@ -1,11 +1,13 @@
 from django.urls import path
 from . import views
+from .views import ReportListCreateView, ReportDetailView, RegionListView
 
 urlpatterns = [
-    path('create/', views.report_create_view, name='report_create'),
-    path('report/track/', views.report_track_view, name='report_track'),
-    path('report/success/', views.report_success_view, name='report_success'),
-    path('reports/', views.report_list_view, name='report_list'),
-    path('reports/reports/<str:tracking_id>/', views.report_detail_view, name='report_detail'),
-    path('dashboard/reports/search/', views.report_search_view, name='report_search'),
+    path('api/regions/', RegionListView.as_view(), name='region-list'),
+    path('api/reports/', ReportListCreateView.as_view(), name='report-list'),
+    path('api/reports/<int:pk>/', ReportDetailView.as_view(), name='report-detail'),
+
+
+    path('api/reports/<int:report_id>/assign/', views.assign_report, name='assign_report'),
+    path('api/reports/<int:report_id>/resolve/', views.resolve_report, name='resolve_report'),
 ]

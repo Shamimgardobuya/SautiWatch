@@ -1,171 +1,125 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib import messages
+from rest_framework import generics, permissions, filters
+from rest_framework.response import Response
+from rest_framework import status
 from django.core.mail import send_mail
-from django.conf import settings
-from django.db.models import Q
-from django.core.paginator import Paginator
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+
 from .models import Report, Region
-from .forms import ReportForm
+from .serializers import ReportSerializer, RegionSerializer
+
+# Custom Permission Class
+
+class CanViewReportsPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.has_perm('reports.can_view_reports')
 
 
-# Create your views here.
+# Region List API
+class RegionListView(generics.ListAPIView):
 
-def report_create_view(request):
-    if request.method == 'POST':
-        form = ReportForm(request.POST)
-        if form.is_valid():
-            report = form.save(commit=False)
-            report.save()
-            
-            notify_authorities(report)
-            
-            messages.success(request, 'Your report has been submitted securely.')
-            return render(request, 'reports/success.html', {'tracking_id': report.tracking_id})
-        else:
-            print(form.errors)
-    else:
-        form = ReportForm()
-    
-    return render(request, 'reports/create_report.html', {'form': form})
+    queryset = Region.objects.all().order_by('name')
+    serializer_class = RegionSerializer
+    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
 
 
-def report_success_view(request):
-    """Success page after report submission"""
-    return render(request, 'reports/report_success.html')
+#  Report List & Create API
+class ReportListCreateView(generics.ListCreateAPIView):
 
-def report_track_view(request):
-    tracking_id = request.GET.get('tracking_id', '')
-    report = None
+    queryset = Report.objects.all().select_related('region', 'assigned_to').order_by('-created_at')
+    serializer_class = ReportSerializer
+    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'urgency_level', 'region'] 
+    search_fields = ['tracking_id', 'description']
+    ordering_fields = ['created_at', 'urgency_level']
 
-    if tracking_id:
+    def perform_create(self, serializer):
+        report = serializer.save()
+        # 📩 Trigger email notification to authority (optional)
         try:
-            report = Report.objects.get(tracking_id=tracking_id)
-        except Report.DoesNotExist:
-            messages.error(request, 'Invalid tracking ID')
+            send_mail(
+                subject=f"🚨 New Report Submitted (ID: {report.tracking_id})",
+                message=f"A new report has been submitted.\nUrgency: {report.urgency_level}\nLocation: {report.location}",
+                from_email="no-reply@example.com",
+                recipient_list=["authority@example.com"],  # 🔸 Replace with actual recipients
+                fail_silently=True,
+            )
+        except Exception:
+            pass  # optional error handling
 
-    return render(request, 'reports/track.html', {
-        'report': report,
-        'tracking_id': tracking_id
-    })
+        return report
 
+
+# --------------------------
+# 🕵️ Single Report Detail API
+# --------------------------
+class ReportDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET: Retrieve a single report (decrypted fields returned in serializer)
+    PUT/PATCH: Update an existing report
+    DELETE: Delete a report (if needed)
+    """
+    queryset = Report.objects.all().select_related('region', 'assigned_to')
+    serializer_class = ReportSerializer
+    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+
+
+# --------------------------
+# 👮 Reports Assigned to Current User (Authority)
+# --------------------------
+class MyAssignedReportsView(generics.ListAPIView):
+    """
+    GET: List reports assigned to the currently authenticated user.
+    """
+    serializer_class = ReportSerializer
+    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+
+    def get_queryset(self):
+        return Report.objects.filter(assigned_to=self.request.user).select_related('region', 'assigned_to').order_by('-created_at')
+
+
+# --------------------------
+# 📊 Dashboard Summary API (Optional)
+# --------------------------
+from rest_framework.views import APIView
+
+class ReportStatsView(APIView):
+    """
+    GET: Summary statistics for dashboard (e.g., counts by status)
+    """
+    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+
+    def get(self, request, *args, **kwargs):
+        total_reports = Report.objects.count()
+        pending = Report.objects.filter(status='pending').count()
+        under_review = Report.objects.filter(status='under_review').count()
+        resolved = Report.objects.filter(status='resolved').count()
+
+        return Response({
+            "total_reports": total_reports,
+            "pending": pending,
+            "under_review": under_review,
+            "resolved": resolved,
+        }, status=status.HTTP_200_OK)
 
 @login_required
 @permission_required('reports.can_view_reports', raise_exception=True)
-def report_list_view(request):
-    #List all reports (for authorized users only)
-    reports = Report.objects.select_related('region', 'assigned_to').all()
-    
-    # Filter by status if provided
-    status = request.GET.get('status')
-    if status:
-        reports = reports.filter(status=status)
-    
-    # Filter by urgency if provided
-    urgency = request.GET.get('urgency')
-    if urgency:
-        reports = reports.filter(urgency_level=urgency)
-    
-    return render(request, 'reports/report_list.html', {'reports': reports})
+def assign_report(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    report.mark_under_review(request.user)
+    return JsonResponse({'message': f'Report {report.tracking_id} assigned and marked Under Review.'})
 
 
+# 🔸 Mark report as resolved
 @login_required
-@permission_required('reports.view_report', raise_exception=True)
-def report_search_view(request):
-    search_query = request.GET.get('q', '').strip()
-    reports = Report.objects.select_related('region').none()
-    
-    if search_query and len(search_query) >= 2:
-        reports = Report.objects.select_related('region').filter(
-            Q(tracking_id__icontains=search_query) |
-            Q(location__icontains=search_query) |
-            Q(region_icontains=search_query)
-        )
-        
-        status = request.GET.get('status', '')
-        if status:
-            reports = reports.filter(status=status)
-        
-        urgency = request.GET.get('urgency', '')
-        if urgency:
-            reports = reports.filter(urgency_level=urgency)
-        
-        region_id = request.GET.get('region', '')
-        if region_id:
-            reports = reports.filter(region_id=region_id)
-        
-        # Sorting
-        sort_by = request.GET.get('sort', '-created_at')
-        valid_sorts = ['created_at', '-created_at', 'urgency_level', '-urgency_level', 
-                       'status', 'incident_date', '-incident_date', 'tracking_id']
-        if sort_by in valid_sorts:
-            reports = reports.order_by(sort_by)
-    
-    # Pagination
-    paginator = Paginator(reports, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    # Get all regions for filter dropdown
-    all_regions = Region.objects.all()
-    
-    context = {
-        'page_obj': page_obj,
-        'search_query': search_query,
-        'results_count': reports.count() if search_query else 0,
-        'status_choices': Report.STATUS_CHOICES,
-        'urgency_choices': Report.URGENCY_CHOICES,
-        'all_regions': all_regions,
-        'current_status': request.GET.get('status', ''),
-        'current_urgency': request.GET.get('urgency', ''),
-        'current_region': request.GET.get('region', ''),
-        'current_sort': request.GET.get('sort', '-created_at'),
-    }
-    
-    return render(request, 'reports/search.html', context)
-
-@login_required
-@permission_required('reports.can_manage_reports', raise_exception=True)
-def report_detail_view(request, tracking_id):
-    report = get_object_or_404(Report, tracking_id=tracking_id)
-    context = {
-        "report": report
-    }
-    return render(request, "reports/report_detail.html", context)
-
-def notify_authorities(report):
-    """Send email notification to relevant authorities"""
-    try:
-        subject = f'[URGENT] New Report #{report.id} - {report.get_urgency_level_display()} Priority'
-        message = f"""
-A new confidential report has been submitted.
-
-Report ID: #{report.id}
-Urgency: {report.get_urgency_level_display()}
-Location: {report.location}
-Region: {report.region.name if report.region else 'Not specified'}
-Date of Incident: {report.incident_date.strftime('%Y-%m-%d %H:%M')}
-Status: {report.get_status_display()}
-
-Please log in to the system to view full details.
-
-This is an automated message. Do not reply to this email.
-        """
-        
-        # Send to region contact if available
-        recipient_list = []
-        if report.region and report.region.contact_email:
-            recipient_list.append(report.region.contact_email)
-        
-        # Also send to admin email
-        recipient_list.append(settings.ADMIN_EMAIL)
-        
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            recipient_list,
-            fail_silently=False,
-        )
-    except Exception as e:
-        print(f"Failed to send notification: {e}")
+@permission_required('reports.can_view_reports', raise_exception=True)
+def resolve_report(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    report.mark_resolved()
+    return JsonResponse({'message': f'Report {report.tracking_id} marked as Resolved.'})

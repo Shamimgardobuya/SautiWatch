@@ -83,7 +83,7 @@ class Report(models.Model):
         except Exception:
             return "[Unable to decrypt]"
         
-    def get_decryped_name(self):
+    def get_decrypted_victim_name(self):
         if self.victim_name and not self.is_anonymous:
             try:
                 return self.decrypt_field(self.victim_name)
@@ -98,6 +98,15 @@ class Report(models.Model):
             except:
                 return "Error decrypting"
         return "Not provided"
+    
+    def mark_under_review(self, authority_user):
+        self.assigned_to = authority_user
+        self.status = 'under_review'
+        self.save()
+
+    def mark_resolved(self):
+        self.status = 'resolved'
+        self.save()
     
     @staticmethod
     def encrypt_field(value):
