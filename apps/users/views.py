@@ -1,55 +1,53 @@
-from django.shortcuts import render
-from .forms import UsersForm, LoginForm
 from .models import CustomUser
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.contrib import messages
-# Create your views here.
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import get_user_model
+from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-def create_user(request):
-    if request.method == 'POST':
-        form = UsersForm(request.POST)
-        if form.is_valid():
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            # Auto-generate username from first and last name
-            username = f"{first_name.lower()}_{last_name.lower()}"
+CustomUser = get_user_model()
 
-            CustomUser.objects.create_user(
-                username=username,
-                first_name=first_name,
-                last_name=last_name,
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password']
-            )          
-            return render(request, 'users/landing_page.html')
-    else:
-        form = UsersForm()
-    return render(request, 'users/register.html', {'form': form})
-
-def login_user(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            try:
-                customuser = CustomUser.objects.get(email=email)
-                if check_password(password, customuser.password):
-                    # Successful login
-                    return render(request, 'users/landing_page.html')
-                else:
-                    form.add_error('password', 'Invalid password')
-            except CustomUser.DoesNotExist:
-                form.add_error('email', 'No user found with that email')
-    else:
-        form = LoginForm()
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
     
-    return render(request, 'users/login.html', {'form': form})
+    
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
 
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, username=user.username, password=password)
+        if user is not None:
+            login(request, user)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({'message': 'Successfully logged out'}, status=status.HTTP_200_OK)
+
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
     
-def logout_user(request):
-    logout(request)
-    return redirect('login_user')
-    
+
+class UserListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]

@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'apps.reports',
     'apps.support',
     'apps.users',
-    'apps.authorities'
+    'apps.authorities',
+    'rest_framework'
     
 ]
 
