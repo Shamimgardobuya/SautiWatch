@@ -15,7 +15,7 @@ from .serializers import ReportSerializer, RegionSerializer
 # Custom Permission Class
 
 class CanViewReportsPermission(permissions.BasePermission):
-
+    
     def has_permission(self, request, view):
         return request.user.has_perm('reports.can_view_reports')
 
@@ -25,7 +25,7 @@ class RegionListView(generics.ListAPIView):
 
     queryset = Region.objects.all().order_by('name')
     serializer_class = RegionSerializer
-    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+    permission_classes = [] #allo all to view regions
 
 
 #  Report List & Create API
