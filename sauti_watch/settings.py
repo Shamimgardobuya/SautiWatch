@@ -29,8 +29,8 @@ TWILIO_FROM_NUMBER=os.getenv("TWILIO_FROM_NUMBER")
 TWILIO_TEST_NUMBER=os.getenv("TWILIO_TEST_NUMBER")
 LOCATIONIQ_API_KEY=os.getenv("LOCATIONIQ_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = os.getenv("REDIS_URL")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL")
 ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY").encode()
 
 # SECURITY WARNING: don't run with debug turned on in production!
