@@ -138,7 +138,7 @@ class Report(models.Model):
 class AuditLog(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name='audit_logs')
     action = models.CharField(max_length=255)
-    performed_by = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL)
+    performed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     timestamp = models.DateTimeField(auto_now_add=True)
     metadata = models.JSONField(blank=True, null=True)
     

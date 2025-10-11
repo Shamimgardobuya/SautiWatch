@@ -3,6 +3,22 @@
 from django.db import migrations, models
 
 
+def rename_description_to_incident_description(apps, schema_editor):
+    table_name = 'reports_report'
+    old_column = 'description'
+    new_column = 'incident_description'
+    connection = schema_editor.connection
+
+    with connection.cursor() as cursor:
+        existing_columns = [
+            col.name for col in connection.introspection.get_table_description(cursor, table_name)
+        ]
+
+        # Only rename if 'description' exists and 'incident_description' does not
+        if old_column in existing_columns and new_column not in existing_columns:
+            cursor.execute(f'ALTER TABLE "{table_name}" RENAME COLUMN "{old_column}" TO "{new_column}";')
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,11 +26,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='report',
-            old_name='description',
-            new_name='incident_description',
-        ),
+        migrations.RunPython(rename_description_to_incident_description),
         migrations.AddField(
             model_name='report',
             name='image',
