@@ -81,7 +81,6 @@ def send_twilio_sms(report, phone, authority_name, action):
             to=phone
             
         )
-        report.assigned_to = authority_instance
         report.status = 'under_review'
         report.save()
         masked_phone = phone[:-4] + "****"
