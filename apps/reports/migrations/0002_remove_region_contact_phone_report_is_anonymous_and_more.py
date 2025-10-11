@@ -34,18 +34,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(remove_contact_phone_field),
-        migrations.AddField(
-            model_name='report',
-            name='is_anonymous',
-            field=models.BooleanField(default=True),
-        ),
-        migrations.AddField(
-            model_name='report',
-            name='tracking_id',
-            field=models.CharField(
-                db_index=True, editable=False, max_length=20, null=True, unique=True
-            ),
-        ),
         migrations.AlterField(
             model_name='region',
             name='contact_email',
