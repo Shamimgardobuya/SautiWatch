@@ -25,6 +25,8 @@ urlpatterns = [
     path('api/users/', include('apps.users.urls')),
     path('', include('apps.reports.urls')),
     path('api/authorities/', include('apps.authorities.urls')),
+    path('api/support/',include('apps.support.urls')),
+
 
 ]
 
