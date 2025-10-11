@@ -117,65 +117,55 @@ export function SupportDirectory() {
         )}
 
         {/* Services Grid */}
-        {!loading && !error && (
-          <>
-            <div className="grid md:grid-cols-2 gap-6">
-              {filteredServices.map((service) => (
-                <Card key={service.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="mb-2">{service.name}</CardTitle>
-                        <CardDescription className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          {service.location}
-                        </CardDescription>
-                      </div>
-                      {service.verified && (
-                        <Badge className="bg-green-600">Verified</Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-2">Services Offered:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {service.services.map((s, idx) => (
-                            <Badge key={idx} variant="secondary">{s}</Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-muted-foreground">Hours:</span>
-                        <span>{service.hours}</span>
-                      </div>
-
-                      <div className="pt-2 border-t">
-                        <Button 
-                          className="w-full bg-purple-600 hover:bg-purple-700"
-                          onClick={() => window.location.href = `tel:${service.phone}`}
-                        >
-                          <Phone className="h-4 w-4 mr-2" />
-                          Call {service.phone}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+  {!loading && !error && (
+  <div className="grid md:grid-cols-2 gap-6">
+    {filteredServices.map((service) => (
+      <Card key={service.id} className="hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="mb-2">{service.name}</CardTitle>
+              <CardDescription className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                {service.region}
+              </CardDescription>
+            </div>
+            {service.is_verified && (
+              <Badge className="bg-green-600">Verified</Badge>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">Service Type:</p>
+              <div className="flex flex-wrap gap-2">
+                {/* Here’s the fix: use category since your backend doesn’t provide services array */}
+                <Badge variant="secondary">{service.category}</Badge>
+              </div>
             </div>
 
-            {filteredServices.length === 0 && services.length > 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">
-                  No services found matching your search. Try different keywords or browse all services.
-                </p>
-              </div>
-            )}
-          </>
-        )}
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Phone:</span>
+              <span>{service.phone_number}</span>
+            </div>
+
+            <div className="pt-2 border-t">
+              <Button 
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                onClick={() => window.location.href = `tel:${service.phone_number}`}
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call {service.phone_number}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+)}
+
 
         {/* Additional Resources */}
         <div className="mt-12 bg-white rounded-lg p-6 shadow-sm">
