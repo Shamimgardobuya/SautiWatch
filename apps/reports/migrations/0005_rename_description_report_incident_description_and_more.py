@@ -19,6 +19,20 @@ def rename_description_to_incident_description(apps, schema_editor):
             cursor.execute(f'ALTER TABLE "{table_name}" RENAME COLUMN "{old_column}" TO "{new_column}";')
 
 
+def add_image_field_if_not_exists(apps, schema_editor):
+    table_name = 'reports_report'
+    column_name = 'image'
+    connection = schema_editor.connection
+
+    # Check if 'image' column already exists before adding
+    with connection.cursor() as cursor:
+        existing_columns = [
+            col.name for col in connection.introspection.get_table_description(cursor, table_name)
+        ]
+        if column_name not in existing_columns:
+            cursor.execute(f'ALTER TABLE "{table_name}" ADD COLUMN "{column_name}" varchar(100);')
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -27,9 +41,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(rename_description_to_incident_description),
-        migrations.AddField(
-            model_name='report',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to='reports/'),
-        ),
+        migrations.RunPython(add_image_field_if_not_exists),
     ]

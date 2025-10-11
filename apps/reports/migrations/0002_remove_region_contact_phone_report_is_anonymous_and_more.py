@@ -1,25 +1,26 @@
-from django.db import migrations, models
+from django.db import migrations
 
 
-def remove_contact_phone_field(apps, schema_editor):
+def remove_contact_fields_safely(apps, schema_editor):
     table_name = 'reports_region'
-    column_name = 'contact_phone'
+    columns_to_drop = ['contact_phone', 'contact_email']
     connection = schema_editor.connection
 
-    # Check if column exists before trying to drop it
+    # Safely check and drop columns if they exist
     with connection.cursor() as cursor:
         existing_columns = [
             col.name for col in connection.introspection.get_table_description(cursor, table_name)
         ]
-        if column_name in existing_columns:
-            cursor.execute(f'ALTER TABLE "{table_name}" DROP COLUMN "{column_name}"')
+        for column in columns_to_drop:
+            if column in existing_columns:
+                cursor.execute(f'ALTER TABLE "{table_name}" DROP COLUMN "{column}" CASCADE;')
 
 
 def delete_reportnote_model(apps, schema_editor):
     table_name = 'reports_reportnote'
     connection = schema_editor.connection
 
-    # Check if table exists before dropping it
+    # Safely drop the table if it exists
     with connection.cursor() as cursor:
         tables = connection.introspection.table_names()
         if table_name in tables:
@@ -33,11 +34,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(remove_contact_phone_field),
-        migrations.AlterField(
-            model_name='region',
-            name='contact_email',
-            field=models.EmailField(blank=True, max_length=254, null=True),
-        ),
+        migrations.RunPython(remove_contact_fields_safely),
         migrations.RunPython(delete_reportnote_model),
     ]
