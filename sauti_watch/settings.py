@@ -17,15 +17,20 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# os.getenv("SECRET_KEY")
+TWILIO_ACCOUNT_SID=os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN=os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_FROM_NUMBER=os.getenv("TWILIO_FROM_NUMBER")
+TWILIO_TEST_NUMBER=os.getenv("TWILIO_TEST_NUMBER")
+LOCATIONIQ_API_KEY=os.getenv("LOCATIONIQ_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-ENCRYPTION_KEY = b'KQZ46BVmHjtWQzdQBXoSNXIcih9hnGQ8m1xAIJfrU8M='
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY").encode()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,13 +48,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
+    'twilio',
     'django_filters',
     'apps.dashboard',
     'apps.reports',
     'apps.support',
     'apps.users',
-    'rest_framework',
-    'corsheaders'
+    'apps.authorities'
     
 ]
 
@@ -125,14 +131,32 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": False,
+        },
+    },
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 

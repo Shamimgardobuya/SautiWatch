@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Report, Region
+from .models import Report, Region, AuditLog
 
 # Register your models here.
+admin.site.register(AuditLog)
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
     list_display = ['name', 'code']
