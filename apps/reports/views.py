@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-
+from rest_framework.permissions import AllowAny
 from .models import Report, Region
 from .serializers import ReportSerializer, RegionSerializer
 
@@ -25,7 +25,7 @@ class RegionListView(generics.ListAPIView):
 
     queryset = Region.objects.all().order_by('name')
     serializer_class = RegionSerializer
-    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
+    permission_classes = []
 
 
 #  Report List & Create API
@@ -33,27 +33,15 @@ class ReportListCreateView(generics.ListCreateAPIView):
 
     queryset = Report.objects.all().select_related('region', 'assigned_to').order_by('-created_at')
     serializer_class = ReportSerializer
-    permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'urgency_level', 'region'] 
     search_fields = ['tracking_id', 'incident_description']
     ordering_fields = ['created_at', 'urgency_level']
 
-    def perform_create(self, serializer):
-        report = serializer.save()
-        # 📩 Trigger email notification to authority (optional)
-        try:
-            send_mail(
-                subject=f"🚨 New Report Submitted (ID: {report.tracking_id})",
-                message=f"A new report has been submitted.\nUrgency: {report.urgency_level}\nLocation: {report.location}",
-                from_email="no-reply@example.com",
-                recipient_list=["authority@example.com"],  # 🔸 Replace with actual recipients
-                fail_silently=True,
-            )
-        except Exception:
-            pass  # optional error handling
-
-        return report
+    def get_permissions(self):
+            if self.request.method == "POST": #allow only anonymous users to post without permission
+                return [AllowAny()]
+            return [permissions.IsAuthenticated(), CanViewReportsPermission()]  #protect for get request
 
 
 
