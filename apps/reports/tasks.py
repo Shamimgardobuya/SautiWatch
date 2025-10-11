@@ -67,7 +67,7 @@ def send_twilio_sms(report, phone, authority_name, action):
             logger.warning(f"Authority '{authority_name}' not found.")
             return
         # Decrypt the report description before sending SMS
-        decrypted_description = report.get_decrypted_description()
+        decrypted_description = report.get_decrypted_incident_description()
 
         msg = (
                 f"New report received!\n"
