@@ -1,39 +1,5 @@
-
 from django.db import migrations, models
 
-def safe_rename_and_add_image(apps, schema_editor):
-    connection = schema_editor.connection
-    table_name = 'reports_report'
-
-    try:
-        existing_columns = [
-            col.name
-            for col in connection.introspection.get_table_description(
-                connection.cursor(),
-                table_name
-            )
-        ]
-
-        # Rename only if 'description' exists
-        if 'description' in existing_columns:
-            schema_editor.execute(
-                f'ALTER TABLE {table_name} RENAME COLUMN description TO incident_description'
-            )
-            print("✅ Renamed 'description' → 'incident_description'")
-        else:
-            print("ℹ️ Column 'description' not found, skipping rename")
-
-        # Add 'image' field only if missing
-        if 'image' not in existing_columns:
-            schema_editor.execute(
-                f"ALTER TABLE {table_name} ADD COLUMN image VARCHAR(100)"
-            )
-            print("✅ Added 'image' column")
-        else:
-            print("ℹ️ Column 'image' already exists, skipping add")
-
-    except Exception as e:
-        print(f"⚠️ Error during migration: {e}")
 
 class Migration(migrations.Migration):
 
@@ -42,5 +8,17 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(safe_rename_and_add_image),
+        # Replaced custom RENAME COLUMN SQL with ORM-based RenameField
+        migrations.RenameField(
+            model_name='report',
+            old_name='description',
+            new_name='incident_description',
+        ),
+        
+        # Replaced custom ADD COLUMN SQL with ORM-based AddField
+        migrations.AddField(
+            model_name='report',
+            name='image',
+            field=models.CharField(max_length=100, null=True, blank=True), # Using CharField to match VARCHAR(100)
+        ),
     ]
