@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -o errexit
+
+pip install -r requirements.txt
+
+python manage.py collectstatic --no-input
+
+
+python manage.py migrate
+
+
+python manage.py import_authorities #for populating authority
+
+python manage.py enrich_police_data #populate phone numbers and location of stations
