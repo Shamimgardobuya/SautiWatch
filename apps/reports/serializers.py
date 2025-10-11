@@ -11,7 +11,7 @@ class ReportSerializer(serializers.ModelSerializer):
     assaulter_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     image = serializers.ImageField(required=False, allow_null=True)
     decrypted_victim_name = serializers.SerializerMethodField(read_only=True)
-    decrypted_description = serializers.SerializerMethodField(read_only=True)
+    decrypted_incident_description = serializers.SerializerMethodField(read_only=True)
     decrypted_assaulter_name = serializers.SerializerMethodField(read_only=True)
 
 
@@ -31,7 +31,7 @@ class ReportSerializer(serializers.ModelSerializer):
             'region',
             'incident_date',
             'incident_description',
-            'decrypted_description',
+            'decrypted_incident_description',
             'image',
             'created_at',
             'updated_at',
@@ -43,8 +43,8 @@ class ReportSerializer(serializers.ModelSerializer):
     def get_decrypted_victim_name(self, obj):
         return obj.get_decrypted_victim_name()
 
-    def get_decrypted_description(self, obj):
-        return obj.get_decrypted_description()
+    def get_decrypted_incident_description(self, obj):
+        return obj.get_decrypted_incident_description()
 
     def get_decrypted_assaulter_name(self, obj):
         return obj.get_decrypted_assaulter_name()

@@ -72,16 +72,16 @@ class Report(models.Model):
             if not self.victim_name.startswith('gAAAAA'):
                 self.victim_name = self.encrypt_field(self.victim_name)
         
-        if self.description and not self.description.startswith('gAAAAA'):
-            self.description = self.encrypt_field(self.description)
+        if self.incident_description and not self.incident_description.startswith('gAAAAA'):
+            self.incident_description = self.encrypt_field(self.incident_description)
 
         if self.assaulter_name and not self.assaulter_name.startswith('gAAAAA'):
             self.assaulter_name = self.encrypt_field(self.assaulter_name)
         super().save(*args, **kwargs)
     
-    def get_decrypted_description(self):
+    def get_decrypted_incident_description(self):
         try:
-            return self.decrypt_field(self.description)
+            return self.decrypt_field(self.incident_description)
         except Exception:
             return "[Unable to decrypt]"
         

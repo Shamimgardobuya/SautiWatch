@@ -36,7 +36,7 @@ class ReportListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated, CanViewReportsPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'urgency_level', 'region'] 
-    search_fields = ['tracking_id', 'description']
+    search_fields = ['tracking_id', 'incident_description']
     ordering_fields = ['created_at', 'urgency_level']
 
     def perform_create(self, serializer):

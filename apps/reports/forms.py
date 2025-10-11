@@ -30,7 +30,7 @@ class ReportForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'datetime-local'
             }),
-            'description': forms.Textarea(attrs={
+            'incident_description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 6,
                 'placeholder': 'Please describe the incident in detail...',
@@ -41,7 +41,7 @@ class ReportForm(forms.ModelForm):
             
         help_texts = {
             'victim_name': 'You can remain anonymous by leaving this blank',
-            'description': 'Your information is encrypted and kept confidential',
+            'incident_description': 'Your information is encrypted and kept confidential',
         }
     def clean(self):
         cleaned_data = super().clean()

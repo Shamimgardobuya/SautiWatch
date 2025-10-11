@@ -12,7 +12,7 @@ class RegionAdmin(admin.ModelAdmin):
 class ReportAdmin(admin.ModelAdmin):
     list_display = ['tracking_id', 'location', 'region', 'urgency_level', 'status', 'created_at', 'is_anonymous']
     list_filter = ['status', 'urgency_level', 'region', 'created_at', 'is_anonymous']
-    search_fields = ['tracking_id', 'location', 'description']
+    search_fields = ['tracking_id', 'location', 'incident_description']
     readonly_fields = ['tracking_id', 'created_at', 'updated_at',]
     date_hierarchy = 'created_at'
     actions = ['mark_as_under_review', 'mark_as_resolved']
@@ -26,7 +26,7 @@ class ReportAdmin(admin.ModelAdmin):
             'fields': ('assaulter_name', 'assaulter_description')
         }),
         ('Incident Details', {
-            'fields': ('location', 'region', 'incident_date', 'description', 'image', 'urgency_level')
+            'fields': ('location', 'region', 'incident_date', 'incident_description', 'image', 'urgency_level')
         }),
         ('Case Management', {
             'fields': ('status',)
