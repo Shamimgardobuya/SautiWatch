@@ -7,7 +7,7 @@ class ReportForm(forms.ModelForm):
     
     class Meta:
         model = Report
-        fields = ['victim_name', 'location', 'region', 'urgency_level', 'incident_date', 'description']
+        fields = ['victim_name', 'location', 'region', 'urgency_level', 'incident_date', 'incident_description']
         widgets = {
             'victim_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -24,7 +24,7 @@ class ReportForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'datetime-local'
             }),
-            'description': forms.Textarea(attrs={
+            'incident_description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 6,
                 'placeholder': 'Provide detailed information about the incident (this will be encrypted)'
@@ -32,7 +32,7 @@ class ReportForm(forms.ModelForm):
         }
         help_texts = {
             'victim_name': 'You can remain anonymous by leaving this blank',
-            'description': 'Your information is encrypted and kept confidential',
+            'incident_description': 'Your information is encrypted and kept confidential',
         }
 
 

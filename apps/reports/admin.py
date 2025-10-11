@@ -5,7 +5,7 @@ from .models import Report, Region, AuditLog
 admin.site.register(AuditLog)
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'code', 'contact_email', 'contact_phone']
+    list_display = ['name', 'code']
     search_fields = ['name', 'code']
 
 
@@ -15,7 +15,7 @@ class RegionAdmin(admin.ModelAdmin):
 class ReportAdmin(admin.ModelAdmin):
     list_display = ['id', 'urgency_level', 'status', 'region', 'created_at', 'assigned_to']
     list_filter = ['status', 'urgency_level', 'region', 'created_at']
-    search_fields = ['location', 'description']
+    search_fields = ['location', 'incident_description']
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
@@ -23,7 +23,7 @@ class ReportAdmin(admin.ModelAdmin):
             'fields': ('victim_name', 'location', 'region', 'urgency_level')
         }),
         ('Incident Details', {
-            'fields': ('incident_date', 'description')
+            'fields': ('incident_date', 'incident_description')
         }),
         ('Status', {
             'fields': ('status', 'assigned_to')
