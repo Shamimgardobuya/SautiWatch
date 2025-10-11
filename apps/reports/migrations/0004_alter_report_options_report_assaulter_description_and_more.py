@@ -1,6 +1,38 @@
 from django.db import migrations, models
 
 
+def add_missing_fields(apps, schema_editor):
+    Report = apps.get_model('reports', 'Report')
+
+    # Check existing fields dynamically
+    existing_field_names = [f.name for f in Report._meta.get_fields() if f.concrete]
+
+    # Add 'assaulter_description' if missing
+    if 'assaulter_description' not in existing_field_names:
+        new_field = models.TextField(
+            name='assaulter_description',
+            blank=True,
+            null=True,
+        )
+        schema_editor.add_field(Report, new_field)
+        print("✅ Added 'assaulter_description' field")
+    else:
+        print("ℹ️ 'assaulter_description' already exists, skipping...")
+
+    # Add 'assaulter_name' if missing
+    if 'assaulter_name' not in existing_field_names:
+        new_field = models.CharField(
+            name='assaulter_name',
+            max_length=255,
+            blank=True,
+            null=True,
+        )
+        schema_editor.add_field(Report, new_field)
+        print("✅ Added 'assaulter_name' field")
+    else:
+        print("ℹ️ 'assaulter_name' already exists, skipping...")
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -15,16 +47,5 @@ class Migration(migrations.Migration):
                 'permissions': [('can_view_reports', 'Can view confidential reports')],
             },
         ),
-        
-        # Replaced RunPython with ORM-based AddField operations
-        migrations.AddField(
-            model_name='report',
-            name='assaulter_description',
-            field=models.TextField(null=True, blank=True), # Adjusted to use Django models.TextField
-        ),
-        migrations.AddField(
-            model_name='report',
-            name='assaulter_name',
-            field=models.CharField(max_length=255, null=True, blank=True), # Adjusted to use Django models.CharField
-        ),
+        migrations.RunPython(add_missing_fields),
     ]

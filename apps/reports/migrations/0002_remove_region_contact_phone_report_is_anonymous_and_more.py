@@ -1,4 +1,18 @@
-from django.db import migrations, models
+from django.db import migrations, models, connection
+
+
+def remove_contact_phone_if_exists(apps, schema_editor):
+    table_name = 'reports_region'
+    column_name = 'contact_phone'
+
+    with connection.cursor() as cursor:
+        cursor.execute(f"PRAGMA table_info({table_name});")
+        columns = [col[1] for col in cursor.fetchall()]
+        if column_name in columns:
+            cursor.execute(f'ALTER TABLE {table_name} DROP COLUMN {column_name};')
+            print(f"Dropped column '{column_name}' from '{table_name}'.")
+        else:
+            print(f"Skipped removing '{column_name}' — column does not exist in '{table_name}'.")
 
 
 class Migration(migrations.Migration):
@@ -8,13 +22,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Replaced RunPython with ORM-based RemoveField
-        migrations.RemoveField(
-            model_name='region',
-            name='contact_phone',
-        ),
-        
-        # Existing AddField operations remain valid
+        migrations.RunPython(remove_contact_phone_if_exists),
         migrations.AddField(
             model_name='report',
             name='is_anonymous',
@@ -31,5 +39,7 @@ class Migration(migrations.Migration):
                 unique=True,
             ),
         ),
-        # migrations.DeleteModel(...)
+        # migrations.DeleteModel(
+        #     name='ReportNote',
+        # ),
     ]
