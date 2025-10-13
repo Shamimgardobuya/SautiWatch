@@ -1,13 +1,15 @@
 
-🧭 Safe & Confidential Reporting System
+#Sauti Watch
+
+**🧭 Safe & Confidential Reporting System**
 A privacy-focused platform that empowers victims to report incidents safely and anonymously, connect with verified support professionals, and promote community accountability through data-driven insights.
 
-🏗️ Project Overview
+**🏗️ Project Overview**
 This system allows users to submit incident reports confidentially, access immediate support contacts, and helps authorities track community-level reports responsibly.
  It combines a Django REST API backend, React.js frontend, SQLite database, and Twilio SMS integration for secure notifications.
 Designs were created in Figma, and all API endpoints are exposed through REST for seamless integration.
 
-🚀 Features
+**🚀 Features**
 1. Safe & Confidential Reporting
     Anonymous or optional victim identification.
     Incident reporting with location, urgency, and description.
@@ -53,7 +55,7 @@ Other Tools
 
 
 
-⚙️ Setup Instructions
+**⚙️ Setup Instructions**
    1. Clone the repository
    ```git clone https://github.com/yourusername/sauti_watch.git```
    ```cd safe-reporting-system```
@@ -86,7 +88,7 @@ Other Tools
    ``` npm install```
    ``` npm start  ```
 
-Frontend runs by default at: http://localhost:3000
+   Frontend runs by default at: http://localhost:3000
 **📡 API Endpoints**
 
   | Endpoint        | Method | Description                             |
@@ -111,31 +113,5 @@ Frontend runs by default at: http://localhost:3000
     Add voice-based reporting for accessibility.
     Integration with Google Maps API for more accurate regional mapping.
     SMS fallback for areas with poor internet connectivity.
-
-
-
-📁 Project Structure
-    safe-reporting-system/
-    │
-    ├── backend/
-    │   ├── reports/
-    │   ├── support/
-    │   ├── dashboard/
-    │   ├── manage.py
-    │   └── db.sqlite3
-    │
-    ├── frontend/
-    │   ├── src/
-    │   ├── public/
-    │   ├── package.json
-    │   └── vite.config.js
-    │
-    ├── figma-designs/
-    │   └── mockups/
-    │
-    └── README.md
-
-
-
 
 
