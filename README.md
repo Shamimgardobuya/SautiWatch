@@ -98,6 +98,33 @@ Other Tools
   | `/api/support/` | GET    | List all verified support contacts      |
   | `/api/support/` | POST   | Add a new support contact (admin only)  |
 
+**🧾 Reports Module**
+
+The **Reports Module** is the heart of the Sauti Watch system. It enables users to file confidential incident reports that go through both automated and human validation processes to ensure accuracy and integrity.
+
+### 🧠 Key Functionalities
+- **Anonymous Reporting:** Users can report incidents without revealing their personal identity.
+- **Data Validation:** The system automatically cross-checks for duplicate reports based on location and timestamp.
+- **Human Review Layer:** Community Admins or trusted Case Officers validate flagged or suspicious reports.
+- **Case Tracking:** Reports progress through statuses — *Pending*, *Under Review*, *Verified*, or *Closed*.
+- **Escalation Workflow:** Verified reports are automatically forwarded to the appropriate support professionals or authorities.
+
+### 🔍 Data Flow
+1. User submits a report (optionally attaching media evidence).
+2. Automated filters check for duplicates and inconsistencies.
+3. Flagged cases are reviewed by authorized human validators.
+4. Verified cases are stored and reflected in dashboards for insights.
+5. Reports can be exported or visualized for community accountability.
+
+### 💡 Integration
+- Connected to `/api/reports/` for CRUD operations.
+- Uses Django REST Framework for backend logic.
+- Integrated with the frontend `frontend/src/reports/` components.
+- Supports future analytics and visual reporting tools.
+
+This ensures that the Sauti Watch system not only gathers reports but also builds **trust, accountability, and data-driven prevention** in communities.
+
+
 
 
 **🛡️ Security & Privacy**
