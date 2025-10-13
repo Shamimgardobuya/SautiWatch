@@ -33,18 +33,18 @@ Designs were created in Figma, and all API endpoints are exposed through REST fo
     
 
 
-🧩 Tech Stack
-**Backend**
-    Django (Python)
-    Django REST Framework
-    SQLite
-    Twilio for SMS notifications
+**🧩 Tech Stack**
+Backend
+   1.  Django (Python)
+   2. Django REST Framework
+   3. SQLite
+   4. Twilio for SMS notifications
 
 
-**Frontend**
-    React.js
-    Axios for API calls
-    Styled with CSS / Figma-based design system
+Frontend
+    1.React.js
+    2. Axios for API calls
+    3. Styled with CSS / Figma-based design system
 
 Other Tools
     Figma (for UI/UX design)
@@ -54,32 +54,32 @@ Other Tools
 
 
 ⚙️ Setup Instructions
-1. Clone the repository
-```git clone https://github.com/yourusername/sauti_watch.git```
-```cd safe-reporting-system```
-
-2. Set up the Backend (Django)
-cd backend
-```python -m venv venv```
-```source venv/bin/activate ``` # On Windows use venv\Scripts\activate
-```pip install -r requirements.txt```
-
-3. Apply Migrations
-```python manage.py migrate```
-
-4. Run the Development Server
-```python manage.py runserver```
-
-Backend runs by default at: http://127.0.0.1:8000/
+   1. Clone the repository
+   ```git clone https://github.com/yourusername/sauti_watch.git```
+   ```cd safe-reporting-system```
+   
+   2. Set up the Backend (Django)
+   cd backend
+   ```python -m venv venv```
+   ```source venv/bin/activate ``` # On Windows use venv\Scripts\activate
+   ```pip install -r requirements.txt```
+   
+   3. Apply Migrations
+   ```python manage.py migrate```
+   
+   4. Run the Development Server
+   ```python manage.py runserver```
+   
+   Backend runs by default at: http://127.0.0.1:8000/
 
 5. Set up Environment Variables
-Create a .env file in the backend directory with:
-  TWILIO_ACCOUNT_SID=your_twilio_account_sid
-  TWILIO_AUTH_TOKEN=your_twilio_auth_token
-  TWILIO_PHONE_NUMBER=your_twilio_phone_number
-  CORS_ALLOWED_ORIGINS=http://localhost:3000
-  ALLOWED_HOSTS=localhost
-  DEBUG=True
+   Create a .env file in the backend directory with:
+    ```TWILIO_ACCOUNT_SID=your_twilio_account_sid`
+     TWILIO_AUTH_TOKEN=your_twilio_auth_token
+     TWILIO_PHONE_NUMBER=your_twilio_phone_number
+     CORS_ALLOWED_ORIGINS=http://localhost:3000
+     ALLOWED_HOSTS=localhost
+     DEBUG=True```
 
 7. Run the Frontend (React)
    ```cd frontend```
@@ -115,25 +115,25 @@ Frontend runs by default at: http://localhost:3000
 
 
 📁 Project Structure
-safe-reporting-system/
-│
-├── backend/
-│   ├── reports/
-│   ├── support/
-│   ├── dashboard/
-│   ├── manage.py
-│   └── db.sqlite3
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.js
-│
-├── figma-designs/
-│   └── mockups/
-│
-└── README.md
+    safe-reporting-system/
+    │
+    ├── backend/
+    │   ├── reports/
+    │   ├── support/
+    │   ├── dashboard/
+    │   ├── manage.py
+    │   └── db.sqlite3
+    │
+    ├── frontend/
+    │   ├── src/
+    │   ├── public/
+    │   ├── package.json
+    │   └── vite.config.js
+    │
+    ├── figma-designs/
+    │   └── mockups/
+    │
+    └── README.md
 
 
 
