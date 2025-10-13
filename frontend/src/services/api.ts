@@ -126,12 +126,12 @@ export const supportAPI = {
   // Get all support services
   list: async (search?: string): Promise<SupportService[]> => {
     const queryParams = search ? `?search=${encodeURIComponent(search)}` : '';
-    return fetchAPI<SupportService[]>(`/support-services/${queryParams}`);
+    return fetchAPI<SupportService[]>(`/support/${queryParams}`);
   },
 
   // Get a single support service
   get: async (id: number): Promise<SupportService> => {
-    return fetchAPI<SupportService>(`/support-services/${id}/`);
+    return fetchAPI<SupportService>(`/support/${id}/`);
   },
 };
 
