@@ -1,0 +1,13 @@
+<form>
+<input type="text" id="region" name="region" placeholder="Search by location" value="{{ region }}">
+        {% for contact in supportcontact %}
+          <div>
+            <h2>{{ contact.name }}</h2>
+            <p>Category: {{ contact.category }}</p>
+            <p>Organization: {{ contact.organization }}</p>
+            <p>Region: {{ contact.region }}</p>
+            <p>Phone: <a href="tel:{{ contact.phone_number }}">Call: {{ contact.phone_number }}</a></p>
+            <p>Email: <a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
+          </div>
+        {% endfor %}
+      </form>
